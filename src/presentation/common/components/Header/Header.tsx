@@ -5,6 +5,7 @@ import { CustomInput } from '../Input';
 import SearchIcon from '../../../../image/icons/search.svg';
 import { useProducts } from '@/presentation/common/stores';
 import ShoppingCartIcon from '../../../../image/icons/shoppingCart.svg';
+import ArrowIcon from '../../../../image/icons/arrowUp.svg';
 import { CartProduct } from '../CartProduct';
 
 interface ITabProps {
@@ -28,16 +29,7 @@ const Tab: FC<ITabProps> = ({ data, isOpen, onMouseEnter, onMouseLeave, onSubTit
         `}
       >
         {title}
-        {subTitle && (
-          <svg
-            className={`ml-2 w-4 h-4 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-          </svg>
-        )}
+        {subTitle && <img src={ArrowIcon} alt="Arrow" className={`ml-2 w-4 h-4 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />}
       </button>
 
       {isOpen && subTitle && onSubTitleClick && (
