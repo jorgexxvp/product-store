@@ -1,7 +1,7 @@
 import productsData from '@/presentation/toolbox/mocks/Products.json';
 import type { ProductRepository } from '@/core/domain/repositories/ProductRepository';
 import type { IProductResponse } from '@/core/domain/models/Product';
-import { PublicApi } from '../api/Api';
+import { PublicApi } from '@/core/infraestructure/api/Api';
 
 export class ProductApi extends PublicApi implements ProductRepository {
   public GetProducts = async (): Promise<IProductResponse> => {

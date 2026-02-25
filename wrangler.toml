@@ -1,8 +1,2 @@
 name = "product-store"
 compatibility_date = "2026-02-01"
-
-[build]
-command = "npm run build"
-
-[site]
-bucket = "./dist" # 

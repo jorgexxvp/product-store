@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode } from 'react';
+import { useEffect, useState, useMemo, useCallback, type ReactNode } from 'react';
 import { clientProductApi } from '@/core';
 import { ProductsContext, type IProduct } from './ProductContext';
 
@@ -11,7 +11,7 @@ export const ProductsProvider = ({ children }: { children: ReactNode }) => {
     localStorage.getItem('productStore') ? JSON.parse(localStorage.getItem('productStore') || '[]') : [],
   );
 
-  const getProducts = async () => {
+  const getProducts = useCallback(async () => {
     setLoading(true);
     try {
       const response = await clientProductApi.GetProducts();
@@ -24,25 +24,28 @@ export const ProductsProvider = ({ children }: { children: ReactNode }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     getProducts();
   }, []);
 
+  const value = useMemo(
+    () => ({
+      products,
+      loading,
+      error,
+      filterData,
+      getProducts,
+      setFilterData,
+      cartProducts,
+      setCartProducts,
+    }),
+    [products, loading, error, filterData, getProducts, cartProducts]
+  );
+
   return (
-    <ProductsContext.Provider
-      value={{
-        products,
-        loading,
-        error,
-        filterData,
-        getProducts,
-        setFilterData,
-        cartProducts,
-        setCartProducts,
-      }}
-    >
+    <ProductsContext.Provider value={value}>
       {children}
     </ProductsContext.Provider>
   );

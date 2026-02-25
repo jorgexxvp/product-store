@@ -1,15 +1,15 @@
-import { type FC } from 'react';
-import AddShoppingIcon from '../../../../image/icons/add.svg';
-import AccountIcon from '../../../../image/icons/account.svg';
-import LoangIcon from '../../../../image/icons/loan.svg';
-import CardIcon from '../../../../image/icons/card.svg';
-import { useProducts, type IProduct } from '../../stores';
+import { memo, type FC } from 'react';
+import AddShoppingIcon from '@/image/icons/add.svg';
+import AccountIcon from '@/image/icons/account.svg';
+import LoangIcon from '@/image/icons/loan.svg';
+import CardIcon from '@/image/icons/card.svg';
+import { useProducts, type IProduct } from '@/presentation/common/stores';
 
 interface ICardProps {
   product: IProduct;
 }
 
-export const Card: FC<ICardProps> = ({ product }) => {
+export const Card: FC<ICardProps> = memo(({ product }) => {
   const iconMap: Record<string, string> = {
     '/icons/account.svg': AccountIcon,
     '/icons/loan.svg': LoangIcon,
@@ -52,11 +52,15 @@ export const Card: FC<ICardProps> = ({ product }) => {
       </div>
 
       <button
+        type="button"
+        aria-label={`Añadir ${product.title} al carrito`}
         onClick={handleAddToCart}
-        className="absolute top-3 right-3 p-2.5 bg-gray-50 rounded-full text-gray-400 opacity-0 group-hover:opacity-100 transition-all duration-200 hover:text-blue-600 hover:bg-blue-50"
+        className="absolute top-3 right-3 p-2.5 bg-gray-50 rounded-full text-gray-400 opacity-0 group-hover:opacity-100 transition-all duration-200 hover:text-blue-600 hover:bg-blue-50 focus-visible:opacity-100 focus-visible:ring-2 focus-visible:ring-blue-500 focus:outline-none"
       >
-        <img src={AddShoppingIcon} alt="Add to cart" className="w-5 h-5" />
+        <img src={AddShoppingIcon} alt="Add to cart" aria-hidden="true" className="w-5 h-5" />
       </button>
     </div>
   );
-};
+});
+
+Card.displayName = 'Card';
