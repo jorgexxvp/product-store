@@ -1,4 +1,4 @@
-import productsData from '@/presentation/toolbox/mocks/products.json';
+import productsData from '@/presentation/toolbox/mocks/Products.json';
 import type { ProductRepository } from '@/core/domain/repositories/ProductRepository';
 import type { IProductResponse } from '@/core/domain/models/Product';
 import { PublicApi } from '../api/Api';
