@@ -68,6 +68,12 @@ const Tab: FC<ITabProps> = ({ data, isOpen, onMouseEnter, onMouseLeave, onSubTit
   );
 };
 
+const title = [
+  { id: 1, title: 'Categorias', subTitle: ['Todas', 'Cuenta', 'Crédito', 'Tarjeta'] },
+  { id: 2, title: 'Ofertas' },
+  { id: 3, title: 'Novedades' },
+];
+
 export const Header: FC = () => {
   const [openId, setOpenId] = useState<number | null>(null);
   const [isOpen, setIsOpen] = useState(false);
@@ -77,11 +83,6 @@ export const Header: FC = () => {
   const mobileMenuRef = useRef<HTMLDivElement>(null);
   const hamburgerRef = useRef<HTMLButtonElement>(null);
 
-  const title = [
-    { id: 1, title: 'Categorias', subTitle: ['Todas', 'Cuenta', 'Crédito', 'Tarjeta'] },
-    { id: 2, title: 'Ofertas' },
-    { id: 3, title: 'Novedades' },
-  ];
   const { products, cartProducts, setFilterData } = useProducts();
 
   const handleMouseEnter = (id: number) => {
