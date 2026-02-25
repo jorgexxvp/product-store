@@ -2,9 +2,10 @@ import React, { useRef, useState, type FC } from 'react';
 
 interface SliderProps {
   children: React.ReactNode;
+  className?: string;
 }
 
-export const Slider: FC<SliderProps> = ({ children }) => {
+export const Slider: FC<SliderProps> = ({ children, className }) => {
   const sliderRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
@@ -39,7 +40,7 @@ export const Slider: FC<SliderProps> = ({ children }) => {
         onMouseUp={handleMouseLeaveOrUp}
         onMouseMove={handleMouseMove}
         className={`
-          flex gap-6 overflow-x-hidden cursor-grab select-none
+          flex gap-6 overflow-x-hidden cursor-grab select-none ${className || ''}
           ${isDragging ? 'cursor-grabbing scale-[0.99] transition-transform' : ''}
         `}
       >
