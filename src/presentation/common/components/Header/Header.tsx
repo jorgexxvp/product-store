@@ -20,24 +20,13 @@ interface ITabProps {
   onClose?: () => void;
 }
 
-const Tab: FC<ITabProps> = ({
-  data,
-  isOpen,
-  onMouseEnter,
-  onMouseLeave,
-  onSubTitleClick,
-  onToggle,
-  onClose,
-}) => {
+const Tab: FC<ITabProps> = ({ data, isOpen, onMouseEnter, onMouseLeave, onSubTitleClick, onToggle, onClose }) => {
   const { title, subTitle } = data;
   const triggerRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const shouldFocusFirst = useRef(false);
 
-  const getFocusableItems = () =>
-    Array.from(
-      menuRef.current?.querySelectorAll<HTMLButtonElement>('[role="menuitem"]') ?? [],
-    );
+  const getFocusableItems = () => Array.from(menuRef.current?.querySelectorAll<HTMLButtonElement>('[role="menuitem"]') ?? []);
 
   useEffect(() => {
     if (isOpen && shouldFocusFirst.current) {
@@ -112,7 +101,7 @@ const Tab: FC<ITabProps> = ({
             src={ArrowIcon}
             alt="Arrow"
             aria-hidden="true"
-            className={`ml-2 w-4 h-4 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
+            className={`ml-2 w-4 h-4 transition-transform duration-200 rotate-180 ${isOpen ? 'rotate-360' : ''}`}
           />
         )}
       </button>
