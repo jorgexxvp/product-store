@@ -6,6 +6,8 @@ import SearchIcon from '../../../../image/icons/search.svg';
 import { useProducts } from '@/presentation/common/stores';
 import ShoppingCartIcon from '../../../../image/icons/shoppingCart.svg';
 import ArrowIcon from '../../../../image/icons/arrowUp.svg';
+import CloseIcon from '../../../../image/icons/close.svg';
+import MenuIcon from '../../../../image/icons/menu.svg';
 import { CartProduct } from '../CartProduct';
 
 interface ITabProps {
@@ -29,7 +31,9 @@ const Tab: FC<ITabProps> = ({ data, isOpen, onMouseEnter, onMouseLeave, onSubTit
         `}
       >
         {title}
-        {subTitle && <img src={ArrowIcon} alt="Arrow" className={`ml-2 w-4 h-4 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />}
+        {subTitle && (
+          <img src={ArrowIcon} alt="Arrow" className={`ml-2 w-4 h-4 rotate-180 transition-transform duration-200 ${isOpen ? 'rotate-360' : ''}`} />
+        )}
       </button>
 
       {isOpen && subTitle && onSubTitleClick && (
@@ -54,7 +58,10 @@ const Tab: FC<ITabProps> = ({ data, isOpen, onMouseEnter, onMouseLeave, onSubTit
 export const Header: FC = () => {
   const [openId, setOpenId] = useState<number | null>(null);
   const [isOpen, setIsOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const cartContainerRef = useRef<HTMLDivElement>(null);
+  const mobileMenuRef = useRef<HTMLDivElement>(null);
+  const hamburgerRef = useRef<HTMLButtonElement>(null);
 
   const title = [
     { id: 1, title: 'Categorias', subTitle: ['Todas', 'Cuenta', 'Crédito', 'Tarjeta'] },
@@ -77,12 +84,40 @@ export const Header: FC = () => {
     } else {
       setFilterData(products.filter((product) => product.category.toLocaleLowerCase() === subTitle.toLowerCase()));
     }
+    setIsMobileMenuOpen(false);
+  };
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const searchTerm = e.target.value
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase();
+
+    const filtered = products.filter((product) => {
+      const productTitle = product.title
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase();
+
+      return productTitle.includes(searchTerm);
+    });
+
+    setFilterData(filtered);
   };
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (isOpen && cartContainerRef.current && !cartContainerRef.current.contains(event.target as Node)) {
         setIsOpen(false);
+      }
+      if (
+        isMobileMenuOpen &&
+        mobileMenuRef.current &&
+        !mobileMenuRef.current.contains(event.target as Node) &&
+        hamburgerRef.current &&
+        !hamburgerRef.current.contains(event.target as Node)
+      ) {
+        setIsMobileMenuOpen(false);
       }
     };
 
@@ -91,67 +126,87 @@ export const Header: FC = () => {
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [isOpen]);
+  }, [isOpen, isMobileMenuOpen]);
 
   return (
-    <div className="flex flex-row w-full justify-between items-center px-6 border-b border-gray-300 py-4">
-      <div className="flex flex-row items-center h-16 w-full gap-4">
-        {title.map((item) => (
-          <Tab
-            key={item.id}
-            data={item}
-            onSubTitleClick={handleSubTitleClick}
-            isOpen={openId === item.id}
-            onMouseEnter={() => handleMouseEnter(item.id)}
-            onMouseLeave={handleMouseLeave}
-          />
-        ))}
-      </div>
-
-      <div className="flex items-center gap-4">
-        <div className="relative group">
-          <CustomInput
-            icon={SearchIcon}
-            onChange={(e) => {
-              const searchTerm = e.target.value
-                .normalize('NFD')
-                .replace(/[\u0300-\u036f]/g, '')
-                .toLowerCase();
-
-              const filtered = products.filter((product) => {
-                const productTitle = product.title
-                  .normalize('NFD')
-                  .replace(/[\u0300-\u036f]/g, '')
-                  .toLowerCase();
-
-                return productTitle.includes(searchTerm);
-              });
-
-              setFilterData(filtered);
-            }}
-            placeholder="Buscar productos o servicios..."
-            className="bg-white border-none rounded-2xl pl-10 pr-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-100 transition-all w-64"
-          />
+    <div className="w-full border-b border-gray-300">
+      <div className="flex flex-row w-full justify-between items-center px-4 md:px-6 py-4 h-16 md:h-auto">
+        <div className="hidden md:flex flex-row items-center h-16 w-full gap-4">
+          {title.map((item) => (
+            <Tab
+              key={item.id}
+              data={item}
+              onSubTitleClick={handleSubTitleClick}
+              isOpen={openId === item.id}
+              onMouseEnter={() => handleMouseEnter(item.id)}
+              onMouseLeave={handleMouseLeave}
+            />
+          ))}
         </div>
 
-        <div className="relative">
-          <button
-            onClick={() => setIsOpen(!isOpen)}
-            className="relative p-3 rounded-2xl min-w-12 bg-white text-gray-600 hover:bg-blue-50 hover:text-blue-600 transition-all active:scale-95"
-          >
-            <img src={ShoppingCartIcon} alt="Cart" className="w-6 h-6" />
-            <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-blue-600 text-xs font-bold text-white border-2 border-white">
-              {cartProducts.length}
-            </span>
-          </button>
+        <button
+          ref={hamburgerRef}
+          className="md:hidden p-2 rounded-xl text-gray-600 hover:bg-gray-100 transition-colors"
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          aria-label="Abrir menú"
+        >
+          <img src={isMobileMenuOpen ? CloseIcon : MenuIcon} alt="Menu" className="w-6 h-6" />
+        </button>
 
-          {isOpen && (
-            <div ref={cartContainerRef} className="absolute top-full right-0 mt-4 z-10 shadow-2xl animate-in fade-in slide-in-from-top-2">
-              <CartProduct />
-            </div>
-          )}
+        <div className="flex items-center gap-2 md:gap-4">
+          <div className="hidden md:block relative group">
+            <CustomInput
+              icon={SearchIcon}
+              onChange={handleSearchChange}
+              placeholder="Buscar productos o servicios..."
+              className="bg-white border-none rounded-2xl pl-10 pr-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-100 transition-all w-64"
+            />
+          </div>
+
+          <div className="relative">
+            <button
+              onClick={() => setIsOpen(!isOpen)}
+              className="relative p-3 rounded-2xl min-w-12 bg-white text-gray-600 hover:bg-blue-50 hover:text-blue-600 transition-all active:scale-95"
+            >
+              <img src={ShoppingCartIcon} alt="Cart" className="w-6 h-6" />
+              <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-blue-600 text-xs font-bold text-white border-2 border-white">
+                {cartProducts.length}
+              </span>
+            </button>
+
+            {isOpen && (
+              <div ref={cartContainerRef} className="absolute top-full right-0 mt-4 z-10 shadow-2xl animate-in fade-in slide-in-from-top-2">
+                <CartProduct />
+              </div>
+            )}
+          </div>
         </div>
       </div>
+
+      {isMobileMenuOpen && (
+        <div ref={mobileMenuRef} className="md:hidden px-4 pb-4 flex flex-col gap-1 border-t border-gray-100">
+          <div className="pt-3 pb-1">
+            <CustomInput
+              icon={SearchIcon}
+              onChange={handleSearchChange}
+              placeholder="Buscar productos o servicios..."
+              className="bg-white border-none rounded-2xl pl-10 pr-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-100 transition-all w-full"
+            />
+          </div>
+          <div className="flex flex-row gap-4">
+            {title.map((item) => (
+              <Tab
+                key={item.id}
+                data={item}
+                onSubTitleClick={handleSubTitleClick}
+                isOpen={openId === item.id}
+                onMouseEnter={() => handleMouseEnter(item.id)}
+                onMouseLeave={handleMouseLeave}
+              />
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
