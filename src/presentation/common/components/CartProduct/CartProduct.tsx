@@ -1,7 +1,10 @@
-import { useEffect, useState, type FC } from 'react';
+import { type FC } from 'react';
 import { useProducts, type IProduct } from '../../stores';
 import TrashIcon from '../../../../image/icons/delete.svg';
 import ShoppingCartIcon from '../../../../image/icons/shoppingCart.svg';
+import AccountIcon from '../../../../image/icons/account.svg';
+import LoangIcon from '../../../../image/icons/loan.svg';
+import CardIcon from '../../../../image/icons/card.svg';
 
 interface IProductProps {
   product: IProduct;
@@ -9,27 +12,16 @@ interface IProductProps {
 }
 
 const ProductComponent: FC<IProductProps> = ({ product, handleDelete }) => {
-  const [imageSrc, setImageSrc] = useState<string | null>(null);
-
-  useEffect(() => {
-    const loadImage = async () => {
-      try {
-        const image = await import(`../../../../image${product.image}`);
-        setImageSrc(image.default);
-      } catch (err) {
-        console.error('No se pudo cargar la imagen dinámica:', err);
-      }
-    };
-
-    if (product.image) {
-      loadImage();
-    }
-  }, [product.image]);
+  const iconMap: Record<string, string> = {
+    '/icons/account.svg': AccountIcon,
+    '/icons/loan.svg': LoangIcon,
+    '/icons/card.svg': CardIcon,
+  };
 
   return (
     <div key={product.id} className="flex items-center gap-4 group">
       <div className="w-16 h-16 rounded-xl overflow-hidden bg-gray-100 shrink-0">
-        {imageSrc && <img src={imageSrc} alt={product.title} className="w-full h-full object-cover" />}
+        {iconMap[product.image] && <img src={iconMap[product.image]} alt={product.title} className="w-full h-full object-cover" />}
       </div>
 
       <div className="flex-1">
