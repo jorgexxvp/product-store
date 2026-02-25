@@ -3,37 +3,39 @@ import { describe, it, expect, vi } from 'vitest';
 import { NotFound } from './NotFound';
 import { BrowserRouter } from 'react-router-dom';
 
-const mockNavigate = vi.fn();
+const mockNavegacion = vi.fn();
 
 vi.mock('react-router-dom', async () => {
   const actual = await vi.importActual('react-router-dom');
   return {
     ...actual,
-    useNavigate: () => mockNavigate,
+    useNavigate: () => mockNavegacion,
   };
 });
 
-describe('NotFound Component', () => {
-  it('renders the 404 message correctly', () => {
+describe('Componente NotFound', () => {
+  it('renderiza el mensaje de error 404 correctamente', () => {
     render(
       <BrowserRouter>
         <NotFound />
-      </BrowserRouter>
+      </BrowserRouter>,
     );
 
     expect(screen.getByText('Página No Encontrada')).toBeInTheDocument();
     expect(screen.getByText('Lo sentimos, la página que buscas no existe.')).toBeInTheDocument();
   });
 
-  it('navigates to home when the button is clicked', () => {
+  it('navega hacia el inicio cuando se hace clic en el botón', () => {
     render(
+      <BrowserRouter>
         <NotFound />
+      </BrowserRouter>,
     );
 
-    const button = screen.getByRole('button', { name: /volver al inicio/i });
-    fireEvent.click(button);
+    const boton = screen.getByRole('button', { name: /volver al inicio/i });
+    fireEvent.click(boton);
 
-    expect(mockNavigate).toHaveBeenCalledTimes(1);
-    expect(mockNavigate).toHaveBeenCalledWith('/');
+    expect(mockNavegacion).toHaveBeenCalledTimes(1);
+    expect(mockNavegacion).toHaveBeenCalledWith('/');
   });
 });

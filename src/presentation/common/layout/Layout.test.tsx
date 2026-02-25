@@ -6,26 +6,28 @@ vi.mock('@/presentation/common/components/Header', () => ({
   Header: () => <header data-testid="mock-header">HeaderMock</header>,
 }));
 
-describe('Layout Component', () => {
-  it('renders Header and children properly', () => {
+describe('Componente Layout', () => {
+  it('debe renderizar el Header y los elementos hijos (children) correctamente', () => {
     render(
       <Layout>
-        <div data-testid="mock-children">Test Content</div>
+        <div data-testid="mock-children">Contenido de Prueba</div>
       </Layout>,
     );
 
     expect(screen.getByTestId('mock-header')).toBeInTheDocument();
     expect(screen.getByTestId('mock-children')).toBeInTheDocument();
+    expect(screen.getByText('Contenido de Prueba')).toBeInTheDocument();
   });
 
-  it('wraps children in a main tag with correct accessibility elements', () => {
+  it('debe envolver los elementos hijos en una etiqueta <main> con atributos de accesibilidad', () => {
     render(
       <Layout>
-        <div>Content</div>
+        <div>Contenido</div>
       </Layout>,
     );
 
     const main = screen.getByRole('main');
+
     expect(main).toHaveAttribute('id', 'main-content');
     expect(main).toHaveAttribute('tabIndex', '-1');
   });

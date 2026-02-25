@@ -3,17 +3,17 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { CartProduct } from './CartProduct';
 import { ProductsContext } from '@/presentation/common/stores/ProductContext';
 
-const mockProduct = {
+const mockProducto = {
   id: 1,
-  title: 'Test Cart Item',
+  title: 'Producto de Prueba',
   price: 50.0,
-  category: 'Test Category',
+  category: 'Categoría de Prueba',
   image: '/icons/card.svg',
 };
 
 const mockSetCartProducts = vi.fn();
 
-const renderCartProduct = (cartProducts = [mockProduct]) => {
+const renderizarCarrito = (cartProducts = [mockProducto]) => {
   return render(
     <ProductsContext.Provider
       value={{
@@ -32,38 +32,48 @@ const renderCartProduct = (cartProducts = [mockProduct]) => {
   );
 };
 
-describe('CartProduct Component', () => {
+describe('Componente CartProduct', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  it('renders empty state when cart is empty', () => {
-    renderCartProduct([]);
+  it('renderiza el estado vacío cuando el carrito no tiene productos', () => {
+    renderizarCarrito([]);
+
     expect(screen.getByText('Tu carro')).toBeInTheDocument();
     expect(screen.getByText('Ningún producto añadido')).toBeInTheDocument();
   });
 
-  it('renders products when cart has items', () => {
-    renderCartProduct();
-    expect(screen.getByText('Test Cart Item')).toBeInTheDocument();
-    expect(screen.getAllByText('$50.00').length).toBeGreaterThan(0);
+  it('renderiza los productos cuando el carrito tiene elementos', () => {
+    renderizarCarrito();
+
+    expect(screen.getByText('Producto de Prueba')).toBeInTheDocument();
+    expect(screen.getAllByText(/\$50\.00/).length).toBeGreaterThan(0);
   });
 
-  it('deletes item when trash icon is clicked', () => {
-    renderCartProduct();
-    const deleteButton = screen.getByRole('button', { name: /eliminar test cart item del carrito/i });
+  it('elimina un producto cuando se hace clic en el icono de basura', () => {
+    renderizarCarrito();
 
-    fireEvent.click(deleteButton);
+    const botonEliminar = screen.getByRole('button', {
+      name: /eliminar producto de prueba del carrito/i,
+    });
+
+    fireEvent.click(botonEliminar);
 
     expect(mockSetCartProducts).toHaveBeenCalledTimes(1);
     expect(mockSetCartProducts).toHaveBeenCalledWith([]);
   });
 
-  it('calculates the total correctly', () => {
-    const mockProduct2 = { ...mockProduct, id: 2, price: 100.0 };
-    renderCartProduct([mockProduct, mockProduct2]);
+  it('calcula el total correctamente', () => {
+    const mockProducto2 = { ...mockProducto, id: 2, price: 100.0, title: 'Segundo Producto' };
+    renderizarCarrito([mockProducto, mockProducto2]);
 
-    expect(screen.getByText('$150.00')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /proceder a pagar 2 artículos por un total de \$150.00/i })).toBeInTheDocument();
+    expect(screen.getByText(/\$150\.00/)).toBeInTheDocument();
+
+    expect(
+      screen.getByRole('button', {
+        name: /proceder a pagar 2 artículos por un total de \$150\.00/i,
+      }),
+    ).toBeInTheDocument();
   });
 });

@@ -4,15 +4,15 @@ import { Portal } from './Portal';
 import { ProductsContext, type IProduct } from '@/presentation/common/stores/ProductContext';
 import { BrowserRouter } from 'react-router-dom';
 
-const renderPortal = (loading = false, filterData: IProduct[] = []) => {
+const renderizarPortal = (estaCargando = false, datosFiltrados: IProduct[] = []) => {
   return render(
     <BrowserRouter>
       <ProductsContext.Provider
         value={{
           products: [],
-          loading,
+          loading: estaCargando,
           error: null,
-          filterData,
+          filterData: datosFiltrados,
           getProducts: vi.fn(),
           setFilterData: vi.fn(),
           cartProducts: [],
@@ -25,27 +25,28 @@ const renderPortal = (loading = false, filterData: IProduct[] = []) => {
   );
 };
 
-describe('Portal Component', () => {
-  it('shows loading indicator when loading is true', () => {
-    renderPortal(true);
+describe('Componente Portal', () => {
+  it('debe mostrar el indicador de carga cuando el estado loading es verdadero', () => {
+    renderizarPortal(true);
 
     expect(screen.getByText('Cargando...')).toBeInTheDocument();
   });
 
-  it('shows empty state message when no products are found', () => {
-    renderPortal(false, []);
+  it('debe mostrar el mensaje de estado vacío cuando no se encuentran productos', () => {
+    renderizarPortal(false, []);
+
     expect(screen.getByText('No se encontraron productos coincidentes.')).toBeInTheDocument();
   });
 
-  it('renders a list of ProductCards when products match the filter', () => {
-    const mockProducts = [
-      { id: 1, title: 'Product 1', price: 10, category: 'cat1', image: '' },
-      { id: 2, title: 'Product 2', price: 20, category: 'cat2', image: '' },
+  it('debe renderizar una lista de tarjetas de producto cuando existen coincidencias', () => {
+    const productosSimulados = [
+      { id: 1, title: 'Producto 1', price: 10, category: 'cat1', image: '' },
+      { id: 2, title: 'Producto 2', price: 20, category: 'cat2', image: '' },
     ];
 
-    renderPortal(false, mockProducts);
+    renderizarPortal(false, productosSimulados);
 
-    expect(screen.getByText('Product 1')).toBeInTheDocument();
-    expect(screen.getByText('Product 2')).toBeInTheDocument();
+    expect(screen.getByText('Producto 1')).toBeInTheDocument();
+    expect(screen.getByText('Producto 2')).toBeInTheDocument();
   });
 });
